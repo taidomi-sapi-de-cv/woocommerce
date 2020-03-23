@@ -1,0 +1,154 @@
+[
+    {
+        "name": "adhocore/jwt",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/adhocore/php-jwt.git",
+            "reference": "3bd8190976698de87fc5c4e85530345912af3f49"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/adhocore/php-jwt/zipball/3bd8190976698de87fc5c4e85530345912af3f49",
+            "reference": "3bd8190976698de87fc5c4e85530345912af3f49",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=7.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "^6.5 || ^7.5"
+        },
+        "time": "2019-12-13T12:15:19+00:00",
+        "type": "library",
+        "installation-source": "source",
+        "autoload": {
+            "psr-4": {
+                "Ahc\\Jwt\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Jitendra Adhikari",
+                "email": "jiten.adhikary@gmail.com"
+            }
+        ],
+        "description": "Ultra lightweight JSON web token (JWT) library for PHP5.5+.",
+        "keywords": [
+            "auth",
+            "json-web-token",
+            "jwt",
+            "jwt-auth",
+            "jwt-php",
+            "token"
+        ]
+    },
+    {
+        "name": "firebase/php-jwt",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/firebase/php-jwt.git",
+            "reference": "20f37291b90ddcad3e9a56b6bd1798bd80336055"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/firebase/php-jwt/zipball/20f37291b90ddcad3e9a56b6bd1798bd80336055",
+            "reference": "20f37291b90ddcad3e9a56b6bd1798bd80336055",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "^4.8|^5"
+        },
+        "time": "2019-12-17T20:19:28+00:00",
+        "type": "library",
+        "installation-source": "source",
+        "autoload": {
+            "psr-4": {
+                "Firebase\\JWT\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "authors": [
+            {
+                "name": "Neuman Vong",
+                "email": "neuman+pear@twilio.com",
+                "role": "Developer"
+            },
+            {
+                "name": "Anant Narayanan",
+                "email": "anant@php.net",
+                "role": "Developer"
+            }
+        ],
+        "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. Should conform to the current spec.",
+        "homepage": "https://github.com/firebase/php-jwt"
+    },
+    {
+        "name": "lindelius/php-jwt",
+        "version": "0.8.1",
+        "version_normalized": "0.8.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/lindelius/php-jwt.git",
+            "reference": "c54ca7609b63738a818c3a140e54a4591139971b"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/lindelius/php-jwt/zipball/c54ca7609b63738a818c3a140e54a4591139971b",
+            "reference": "c54ca7609b63738a818c3a140e54a4591139971b",
+            "shasum": ""
+        },
+        "require": {
+            "ext-json": "*",
+            "php": "^7.1"
+        },
+        "require-dev": {
+            "ext-openssl": "*",
+            "php": "^7.1",
+            "phpbench/phpbench": "^0.14",
+            "phpunit/phpunit": "^7.0"
+        },
+        "time": "2019-03-01T23:00:55+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Lindelius\\JWT\\": "src/"
+            },
+            "files": [
+                "src/functions.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "Apache-2.0"
+        ],
+        "authors": [
+            {
+                "name": "Tom Lindelius",
+                "homepage": "https://lindelius.com",
+                "role": "Developer"
+            }
+        ],
+        "description": "Convenience library for working with JSON Web Tokens (JWT) in PHP",
+        "homepage": "https://github.com/lindelius/php-jwt",
+        "keywords": [
+            "helpers",
+            "jwt",
+            "php"
+        ]
+    }
+]
