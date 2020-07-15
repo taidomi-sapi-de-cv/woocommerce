@@ -22,6 +22,13 @@ class Deactivate{
             rmdir($carpetaRaiz.'/imgs');
             rmdir($dirpath);
         }
+        /*$templateLanguages = $carpetaRaiz."/wp-content/languages/plugins";
+        $filesLanguages = glob(dirname(dirname(dirname(__FILE__)))."/languages/*",GLOB_MARK);
+        foreach($filesLanguages as $file):
+            $archivo = explode("/",$file);
+            $totalArray = count($archivo);
+            if($archivo[$totalArray-1]!="woocommerce-pay-plugin.pot") unlink($templateLanguages.'/'.$archivo[$totalArray-1]);
+        endforeach;*/
         flush_rewrite_rules();
     }
 }

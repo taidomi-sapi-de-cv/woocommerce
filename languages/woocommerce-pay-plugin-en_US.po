@@ -1,0 +1,36 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WooDomitai\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-03-23 08:09+0000\n"
+"PO-Revision-Date: 2020-03-23 08:10+0000\n"
+"Last-Translator: Sergio Sosa <sergioarsosa95@gmail.com>\n"
+"Language-Team: English (United States)\n"
+"Language: en_US\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.3.1; wp-5.2.4"
+
+#. URI of the plugin
+msgid "https://domitai.com/"
+msgstr ""
+
+#. Author of the plugin
+msgid "Nodeschool y Domitai."
+msgstr "Nodeschool and Domitai."
+
+#. Description of the plugin
+msgid ""
+"Plugin que permite realizar pagos con diversas criptomonedas para "
+"woocommerce."
+msgstr ""
+
+#. Name of the plugin
+msgid "WooDomitai"
+msgstr ""
+
+msgid "Seleccionar la criptomoneda para pagar:"
+msgstr "Select the crypto-currency to pay:"

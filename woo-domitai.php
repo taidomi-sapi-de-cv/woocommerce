@@ -1,21 +1,22 @@
 <?php
 /**
  * Plugin Name: WooDomitai
+ * Plugin URI: https://domitai.com/
  * Description: Plugin que permite realizar pagos con diversas criptomonedas para woocommerce.
- * Author: Nodeschool
- * Version: 1.2.1
- * Text Domain: wc-gateway-offline
+ * Author: Nodeschool y Domitai.
+ * Version: 1.4.1
+ * Text Domain: woocommerce-pay-plugin
  *
  *
- * License: GNU General Public License v3.0
- * License URI: http://www.gnu.org/licenses/gpl-3.0.html
+ * License: Apache License 2.0
+ * License URI: https://www.apache.org/licenses/LICENSE-2.0
  *
- * @package   WC-Gateway-Offline
+ * @package   WooDomitai
  * @author    Nodeschool Tabasco
  * @category  Admin
  *
- * This offline gateway forks the WooCommerce core "Cheque" payment gateway to create another offline payment method.
  */
+ 
 defined( 'ABSPATH' ) or exit;
 use Inc\Base\Activate;
 use Inc\Base\Deactivate;
@@ -59,7 +60,7 @@ add_filter( 'woocommerce_payment_gateways', 'wc_offline_add_to_gateways' );
  */
 function wc_offline_gateway_plugin_links( $links ) {
 	$plugin_links = array(
-		'<a href="' . admin_url( 'admin.php?page=wc-settings&tab=checkout&section=offline_gateway' ) . '">' . __( 'Configure', 'wc-gateway-offline' ) . '</a>'
+		'<a href="' . admin_url( 'admin.php?page=wc-settings&tab=checkout&section=bitcoin_domitai' ) . '">' . __( 'Configure', 'wc-gateway-offline' ) . '</a>'
 	);
 	return array_merge( $plugin_links, $links );
 }
@@ -123,10 +124,10 @@ function wc_offline_gateway_init() {
 		// Constructor for the gateway.
 		public function __construct() {
 			$this->id                 = 'bitcoin_domitai';
-			$this->icon               = apply_filters('woocommerce_offline_icon', '');
+			$this->icon               = apply_filters('woocommerce_gateway_icon', "/imgs/btc_small.png");
 			$this->has_fields         = false;
 			$this->method_title       = __( 'Woo-domitai', 'wc-gateway-offline' );
-			$this->method_description = __( 'Permite realizar pagos con la criptomoneda de tu preferencia.', 'wc-gateway-offline' );
+			$this->method_description = __( DomitaiApi::languageTranslate('description'), 'wc-gateway-offline' );
 		  
 			// Load the settings.
 			$this->init_form_fields();
@@ -136,8 +137,6 @@ function wc_offline_gateway_init() {
 			$this->title        = $this->get_option( 'title' );
 			$this->description  = "<div style='text-align:center'><p>".$this->get_option( 'description' )."</p></div>";//$this->get_option( 'description' );
 			//$this->instructions = $this->get_option( 'instructions', $this->instructions );
-			$this->token = $this->get_option( 'token', $this->token );
-			$this->token_secret = $this->get_option( 'token_secret',$this->token_secret);
 			$this->punto_venta = $this->get_option( 'punto_venta', $this->punto_venta);
 			$this->isTest = $this->get_option("isTest",$this->isTest);
 		  
@@ -153,44 +152,30 @@ function wc_offline_gateway_init() {
 		public function init_form_fields() {
 			$this->form_fields =  array(
 		  		'title' => array(
-					'title'       => __( 'Title', 'wc-gateway-offline' ),
+					'title'       => __( DomitaiApi::languageTranslate('title'), 'wc-gateway-offline' ),
 					'type'        => 'text',
-					'description' => __( 'This controls the title for the payment method the customer sees during checkout.', 'wc-gateway-offline' ),
+					//'description' => __( 'This controls the title for the payment method the customer sees during checkout.', 'wc-gateway-offline' ),
 					'default'     => __( 'Plugin domitai', 'wc-gateway-offline' ),
 					'desc_tip'    => true,
 				),
 				'description' => array(
-					'title'       => __( 'Description', 'wc-gateway-offline' ),
+					'title'       => __( DomitaiApi::languageTranslate('description_field'), 'wc-gateway-offline' ),
 					'type'        => 'textarea',
-					'description' => __( 'Payment method description that the customer will see on your checkout.', 'wc-gateway-offline' ),
+					//'description' => __( 'Payment method description that the customer will see on your checkout.', 'wc-gateway-offline' ),
 					'default'     => __( 'Please remit payment to Store Name upon pickup or delivery.', 'wc-gateway-offline' ),
 					'desc_tip'    => true,
 				),
-				'token' => array(
-					'title'       => __( 'Domitai Key', 'wc-gateway-offline' ),
-					'type'        => 'input',
-					'description' => __( 'Token of domitai account.', 'wc-gateway-offline' ),
-					'default'     => '',
-					'desc_tip'    => true,
-				),
-				'token_secret' => array(
-					'title'       => __( 'Domitai Key Secret', 'wc-gateway-offline' ),
-					'type'        => 'input',
-					'description' => __( 'Secret token of domitai account.', 'wc-gateway-offline' ),
-					'default'     => '',
-					'desc_tip'    => true,
-				),
 				'punto_venta' => array(
-					'title'       => __( 'Punto de venta de domitai', 'wc-gateway-offline' ),
+					'title'       => __( DomitaiApi::languageTranslate('punto_venta'), 'wc-gateway-offline' ),
 					'type'        => 'input',
-					'description' => __( 'Punto de venta creado en tu aplicación de domitai', 'wc-gateway-offline' ),
+					//'description' => __( 'Punto de venta creado en tu aplicación de domitai', 'wc-gateway-offline' ),
 					'default'     => '',
 					'desc_tip'    => true,
 				),
 				'isTest' => array(
-					'title'       => __( 'Habilitar testnet', 'wc-gateway-offline' ),
+					'title'       => __( DomitaiApi::languageTranslate('testnet'), 'wc-gateway-offline' ),
 					'type'        => 'checkbox',
-					'description' => __( 'Se habilita para poder probar que el punto de venta esta correctamente configurado.', 'wc-gateway-offline' ),
+					//'description' => __( 'Se habilita para poder probar que el punto de venta esta correctamente configurado.', 'wc-gateway-offline' ),
 					'default'     => '',
 					'desc_tip'    => true,
 				),
@@ -214,11 +199,10 @@ function wc_offline_gateway_init() {
 		}
 	
 		public function process_payment( $order_id ) {
-			//echo $this->token;
 			$order = wc_get_order( $order_id );
-			$token = DomitaiApi::generateJWT($this->token,$this->token_secret);
+			
 			//Petición a la API de domitai
-			$todo = DomitaiApi::domitaiPay($token,$order,$this->punto_venta,$this->isTest);
+			$todo = DomitaiApi::domitaiPay($order,$this->punto_venta,$this->isTest);
 			$qr = $todo['payload']['accepted'];
 			if(count($qr)>0){
 				$oid = $todo['oid'];
