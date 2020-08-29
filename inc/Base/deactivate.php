@@ -9,7 +9,7 @@ class Deactivate{
         $carpetaRaiz = dirname(dirname(dirname(dirname(dirname(dirname(__FILE__))))));
         
         $templateUri = get_template_directory();
-        $dirpath =$templateUri."/checkout"; 
+        $dirpath = $templateUri."/checkout"; 
         if(is_dir($dirpath)){
             $files = glob($dirpath.'/*',GLOB_MARK);
             $images = glob($carpetaRaiz.'/imgs/*',GLOB_MARK);

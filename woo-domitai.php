@@ -4,7 +4,7 @@
  * Plugin URI: https://domitai.com/
  * Description: Plugin que permite realizar pagos con diversas criptomonedas para woocommerce.
  * Author: Nodeschool y Domitai.
- * Version: 1.4.1
+ * Version: 1.5.0
  * Text Domain: woocommerce-pay-plugin
  *
  *
@@ -213,7 +213,26 @@ function wc_offline_gateway_init() {
 				//$order->update_status( 'on-hold', __( 'Awaiting offline payment', 'wc-gateway-offline' ) );
 				// Reduce stock levels
 				$order->reduce_order_stock();
-				// Return thankyou redirect
+
+				$metaDataField = get_metadata("term",1,"template_value");
+				if(count($metaDataField) > 0 ) {
+					$lastTemplate = $metaDataField[0];
+					$templateUri = get_template_directory()."/checkout";
+					$fileName = $templateUri."/thankyou.php";
+					if($lastTemplate != $templateUri){
+						update_metadata("term",1,"template_value",$templateUri);
+						if(!is_dir($templateUri)) mkdir($templateUri,0777,true);
+						copy(dirname(__FILE__)."/inc/Base/thankyou.php",$fileName);
+						
+						if(is_dir($lastTemplate)){
+							$files = glob($lastTemplate.'/*',GLOB_MARK);
+							foreach($files as $file):
+								unlink($file);
+							endforeach;
+							rmdir($lastTemplate);
+						}
+					}
+				}
 				return array(
 					'result' 	=> 'success',
 					'redirect'	=> $this->get_return_url( $order )

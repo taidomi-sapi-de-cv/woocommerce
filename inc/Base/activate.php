@@ -8,6 +8,9 @@ namespace Inc\Base;
     public static function activate(){
         $carpetaRaiz = dirname(dirname(dirname(dirname(dirname(dirname(__FILE__))))));
         $templateUri = get_template_directory()."/checkout";
+        $metaDataField = get_metadata("term",1,"template_value");
+        if(count($metaDataField) > 0 ) update_metadata("term",1,"template_value",$templateUri);
+        else add_metadata("term",1,"template_value",$templateUri);
         $fileName = $templateUri."/thankyou.php";
         if(!is_dir($templateUri)) mkdir($templateUri,0777,true);
         copy(dirname(__FILE__)."/thankyou.php",$fileName);
