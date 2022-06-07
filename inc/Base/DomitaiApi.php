@@ -1,10 +1,12 @@
 <?php
-namespace Inc\Base;
+namespace Domitai\Base;
 require_once dirname(dirname(dirname(__FILE__)))."/vendor/autoload.php";
 use Ahc\Jwt\JWT;
 
 class DomitaiApi{
-
+    public function __construct() {
+        $this->BaseApiUrl = "https://domitai.com/api";
+    }
     public function generateJWT($key,$secret_key){
         $jwt = new JWT($secret_key);
         $accessToken = $jwt->encode([
@@ -29,20 +31,15 @@ class DomitaiApi{
                                 "orderid" => $order->id
                             ),
                             "generateQR" => true);
-        $postFieldsString = json_encode($postFields);
-        //print_r($postFields);
-        $ch = curl_init();
-        curl_setopt($ch,CURLOPT_URL,"https://domitai.com/api/pos");
-        curl_setopt($ch, CURLOPT_POST, TRUE);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $postFieldsString);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch,CURLOPT_HTTPHEADER,array(
-            //"Authorization: bearer ".$token,
-            "Content-Type: application/json"
-        ));
-        $response = curl_exec($ch);
-        curl_close($ch);
-        $todo = json_decode($response,true);
+        $postFieldsString = wp_json_encode($postFields);
+        $args = array(
+            "body" => $postFieldsString,
+            "headers" => array(
+                "Content-Type" => "application/json"
+            )
+        );
+        $response =  wp_remote_post( $this->BaseApiUrl."/pos", $args );
+        $todo = json_decode(wp_remote_retrieve_body($response), true);
         return $todo;
     }
 

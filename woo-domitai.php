@@ -4,7 +4,7 @@
  * Plugin URI: https://domitai.com/
  * Description: Plugin que permite realizar pagos con diversas criptomonedas para woocommerce.
  * Author: Nodeschool y Domitai.
- * Version: 1.5.0
+ * Version: 1.6.0
  * Text Domain: woocommerce-pay-plugin
  *
  *
@@ -18,8 +18,10 @@
  */
  
 defined( 'ABSPATH' ) or exit;
-use Inc\Base\Activate;
-use Inc\Base\Deactivate;
+define('WOO_DOMITAI_PLUGIN_ASSETS_PATH', plugins_url( '/assets', __FILE__ ));
+
+use Domitai\Base\Activate;
+use Domitai\Base\Deactivate;
 
 function activate_domitai_plugin(){
 	Activate::activate();
@@ -100,35 +102,40 @@ function wl_orders(){
 
 function wl_check_status(){
 	if(isset($_POST['id'])){
-		$orderid = $_POST['id'];
+		$orderid = sanitize_text_field($_POST['id']);
 		$order = new WC_Order($orderid);
 		return array("message" => "correcto","status" => $order->status);	;
 	}else return array("message" => "Sin permisos para entrar");
 }
+
 add_action('rest_api_init',function(){
 	register_rest_route( 'wl/v1','webhook',[
 		'methods'=>'POST',
-		'callback' => 'wl_orders'
+		'callback' => 'wl_orders',
+		'permission_callback' => '__return_true'
 	]);
 });
 add_action('rest_api_init',function(){
 	register_rest_route( 'wl/v1','status_order',[
 		'methods'=>'POST',
-		'callback' => 'wl_check_status'
+		'callback' => 'wl_check_status',
+		'permission_callback' => '__return_true'
 	]);
 });
-use Inc\Base\DomitaiApi;
-function wc_offline_gateway_init() {
 
+use Domitai\Base\DomitaiApi;
+function wc_offline_gateway_init() {
 	class WC_Gateway_Offline extends WC_Payment_Gateway {
 		// Constructor for the gateway.
 		public function __construct() {
+			$this->domitaiAPI = new DomitaiApi();
+	
 			$this->id                 = 'bitcoin_domitai';
-			$this->icon               = apply_filters('woocommerce_gateway_icon', "/imgs/btc_small.png");
+			$this->icon               = apply_filters('woocommerce_gateway_icon', constant("WOO_DOMITAI_PLUGIN_ASSETS_PATH")."/images/btc_small.png");
 			$this->has_fields         = false;
 			$this->method_title       = __( 'Woo-domitai', 'wc-gateway-offline' );
-			$this->method_description = __( DomitaiApi::languageTranslate('description'), 'wc-gateway-offline' );
-		  
+			$this->method_description = __( $this->domitaiAPI->languageTranslate('description'), 'wc-gateway-offline' );
+			
 			// Load the settings.
 			$this->init_form_fields();
 			$this->init_settings();
@@ -137,9 +144,9 @@ function wc_offline_gateway_init() {
 			$this->title        = $this->get_option( 'title' );
 			$this->description  = "<div style='text-align:center'><p>".$this->get_option( 'description' )."</p></div>";//$this->get_option( 'description' );
 			//$this->instructions = $this->get_option( 'instructions', $this->instructions );
-			$this->punto_venta = $this->get_option( 'punto_venta', $this->punto_venta);
-			$this->isTest = $this->get_option("isTest",$this->isTest);
-		  
+			$this->punto_venta = $this->get_option( 'punto_venta');
+			$this->isTest = $this->get_option("isTest");
+			
 			// Actions
 			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 			//add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'thankyou_page' ) );
@@ -152,28 +159,28 @@ function wc_offline_gateway_init() {
 		public function init_form_fields() {
 			$this->form_fields =  array(
 		  		'title' => array(
-					'title'       => __( DomitaiApi::languageTranslate('title'), 'wc-gateway-offline' ),
+					'title'       => __( $this->domitaiAPI->languageTranslate('title'), 'wc-gateway-offline' ),
 					'type'        => 'text',
 					//'description' => __( 'This controls the title for the payment method the customer sees during checkout.', 'wc-gateway-offline' ),
 					'default'     => __( 'Plugin domitai', 'wc-gateway-offline' ),
 					'desc_tip'    => true,
 				),
 				'description' => array(
-					'title'       => __( DomitaiApi::languageTranslate('description_field'), 'wc-gateway-offline' ),
+					'title'       => __( $this->domitaiAPI->languageTranslate('description_field'), 'wc-gateway-offline' ),
 					'type'        => 'textarea',
 					//'description' => __( 'Payment method description that the customer will see on your checkout.', 'wc-gateway-offline' ),
 					'default'     => __( 'Please remit payment to Store Name upon pickup or delivery.', 'wc-gateway-offline' ),
 					'desc_tip'    => true,
 				),
 				'punto_venta' => array(
-					'title'       => __( DomitaiApi::languageTranslate('punto_venta'), 'wc-gateway-offline' ),
+					'title'       => __( $this->domitaiAPI->languageTranslate('punto_venta'), 'wc-gateway-offline' ),
 					'type'        => 'input',
 					//'description' => __( 'Punto de venta creado en tu aplicación de domitai', 'wc-gateway-offline' ),
 					'default'     => '',
 					'desc_tip'    => true,
 				),
 				'isTest' => array(
-					'title'       => __( DomitaiApi::languageTranslate('testnet'), 'wc-gateway-offline' ),
+					'title'       => __( $this->domitaiAPI->languageTranslate('testnet'), 'wc-gateway-offline' ),
 					'type'        => 'checkbox',
 					//'description' => __( 'Se habilita para poder probar que el punto de venta esta correctamente configurado.', 'wc-gateway-offline' ),
 					'default'     => '',
@@ -200,11 +207,10 @@ function wc_offline_gateway_init() {
 	
 		public function process_payment( $order_id ) {
 			$order = wc_get_order( $order_id );
-			
 			//Petición a la API de domitai
-			$todo = DomitaiApi::domitaiPay($order,$this->punto_venta,$this->isTest);
+			$todo = $this->domitaiAPI->domitaiPay($order,$this->punto_venta,$this->isTest);
 			$qr = $todo['payload']['accepted'];
-			if(count($qr)>0){
+			if (count($qr)>0) {
 				$oid = $todo['oid'];
 				$order->update_meta_data("_qr_image",$qr);
 				$order->update_meta_data("_oid",$oid);
@@ -213,26 +219,7 @@ function wc_offline_gateway_init() {
 				//$order->update_status( 'on-hold', __( 'Awaiting offline payment', 'wc-gateway-offline' ) );
 				// Reduce stock levels
 				$order->reduce_order_stock();
-
-				$metaDataField = get_metadata("term",1,"template_value");
-				if(count($metaDataField) > 0 ) {
-					$lastTemplate = $metaDataField[0];
-					$templateUri = get_template_directory()."/checkout";
-					$fileName = $templateUri."/thankyou.php";
-					if($lastTemplate != $templateUri){
-						update_metadata("term",1,"template_value",$templateUri);
-						if(!is_dir($templateUri)) mkdir($templateUri,0777,true);
-						copy(dirname(__FILE__)."/inc/Base/thankyou.php",$fileName);
-						
-						if(is_dir($lastTemplate)){
-							$files = glob($lastTemplate.'/*',GLOB_MARK);
-							foreach($files as $file):
-								unlink($file);
-							endforeach;
-							rmdir($lastTemplate);
-						}
-					}
-				}
+				// Return thankyou redirect
 				return array(
 					'result' 	=> 'success',
 					'redirect'	=> $this->get_return_url( $order )
@@ -253,7 +240,7 @@ function wc_offline_gateway_init() {
 		}
   }
 
-  if( class_exists('Inc\\Init')){
-	Inc\Init::register_services();
+  if( class_exists('Domitai\\Init')){
+	Domitai\Init::register_services();
   }
 }

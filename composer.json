@@ -11,7 +11,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Inc\\": "./inc"
+      "Domitai\\": "./inc"
     },
     "classmap": [
       "inc/"

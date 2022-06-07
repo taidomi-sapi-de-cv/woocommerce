@@ -15,13 +15,13 @@ class ComposerStaticInit1ab8129f25e80a01c2f4db0939337682
         array (
             'Lindelius\\JWT\\' => 14,
         ),
-        'I' => 
-        array (
-            'Inc\\' => 4,
-        ),
         'F' => 
         array (
             'Firebase\\JWT\\' => 13,
+        ),
+        'D' => 
+        array (
+            'Domitai\\' => 8,
         ),
         'A' => 
         array (
@@ -34,13 +34,13 @@ class ComposerStaticInit1ab8129f25e80a01c2f4db0939337682
         array (
             0 => __DIR__ . '/..' . '/lindelius/php-jwt/src',
         ),
-        'Inc\\' => 
-        array (
-            0 => __DIR__ . '/../..' . '/inc',
-        ),
         'Firebase\\JWT\\' => 
         array (
             0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
+        ),
+        'Domitai\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/inc',
         ),
         'Ahc\\Jwt\\' => 
         array (
@@ -49,10 +49,11 @@ class ComposerStaticInit1ab8129f25e80a01c2f4db0939337682
     );
 
     public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'Domitai\\Init' => __DIR__ . '/../..' . '/inc/init.php',
         'Inc\\Base\\Activate' => __DIR__ . '/../..' . '/inc/Base/activate.php',
         'Inc\\Base\\Deactivate' => __DIR__ . '/../..' . '/inc/Base/deactivate.php',
         'Inc\\Base\\DomitaiApi' => __DIR__ . '/../..' . '/inc/Base/DomitaiApi.php',
-        'Inc\\Init' => __DIR__ . '/../..' . '/inc/init.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

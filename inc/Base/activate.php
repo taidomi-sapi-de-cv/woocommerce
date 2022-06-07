@@ -2,32 +2,17 @@
 /**
  * @package DomitaiPlugin
  */
-namespace Inc\Base;
+namespace Domitai\Base;
  class Activate{
 
     public static function activate(){
-        $carpetaRaiz = dirname(dirname(dirname(dirname(dirname(dirname(__FILE__))))));
+        $rootPath = dirname(dirname(get_template_directory()));
         $templateUri = get_template_directory()."/checkout";
-        $metaDataField = get_metadata("term",1,"template_value");
-        if(count($metaDataField) > 0 ) update_metadata("term",1,"template_value",$templateUri);
-        else add_metadata("term",1,"template_value",$templateUri);
         $fileName = $templateUri."/thankyou.php";
         if(!is_dir($templateUri)) mkdir($templateUri,0777,true);
         copy(dirname(__FILE__)."/thankyou.php",$fileName);
-        $templateUriImages = $carpetaRaiz."/imgs";
-        if(!is_dir($templateUriImages)) mkdir($templateUriImages,0777,true);
-        
-        $files = glob(dirname(__FILE__)."/icons/*",GLOB_MARK);
-        foreach($files as $file):
-            $archivo = explode("/",$file);
-            $totalArray = count($archivo);
-            copy($file,$templateUriImages.'/'.$archivo[$totalArray-1]);
-        endforeach;
-
-        $templateLanguages = $carpetaRaiz."/wp-content/languages/plugins";
-        if(!is_dir($templateLanguages)) mkdir($templateUriImages,0777,true);
-        $filesLanguages = glob(dirname(dirname(dirname(__FILE__)))."/languages/*",GLOB_MARK);
-        
+        $templateLanguages = $rootPath."/languages/plugins";
+        $filesLanguages = glob(dirname(plugin_dir_path(__DIR__))."/languages/*",GLOB_MARK);
         foreach($filesLanguages as $file):
             $archivo = explode("/",$file);
             $totalArray = count($archivo);

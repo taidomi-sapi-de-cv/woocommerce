@@ -2,7 +2,7 @@
 /**
  * @package WoocommercePlugin
  */
-namespace Inc;
+namespace Domitai;
 
 class Init{
 

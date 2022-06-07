@@ -1,5 +1,6 @@
 <?php
 defined( 'ABSPATH' ) || exit;
+$ASSETS_URL = constant("WOO_DOMITAI_PLUGIN_ASSETS_PATH");
 $language = explode("_",get_locale());
 ?>
 <style>
@@ -62,12 +63,14 @@ $language = explode("_",get_locale());
  }
 </style>
 <div class="woocommerce-order">
- 	<input type="hidden" id="language" value="<?=$language[0]?>"/>
+ 	<input type="hidden" id="language" value="<?php echo $language[0]; ?>"/>
+	<input type="hidden" id="assetsUrl" value="<?php echo $ASSETS_URL; ?>"/>
+	 
 	<?php if ( $order ) :
 
 		do_action( 'woocommerce_before_thankyou', $order->get_id() ); ?>
-		<input type="hidden" id="orderid" value="<?=$order->get_id()?>"/>
-		<input type="hidden" id="statusOrder" value="<?=$order->status?>"/>
+		<input type="hidden" id="orderid" value="<?php echo $order->get_id(); ?>"/>
+		<input type="hidden" id="statusOrder" value="<?php echo $order->status; ?>"/>
 		<?php if ( $order->has_status( 'failed' ) ) : ?>
 
 			<p class="woocommerce-notice woocommerce-notice--error woocommerce-thankyou-order-failed"><?php esc_html_e( 'Unfortunately your order cannot be processed as the originating bank/merchant has declined your transaction. Please attempt your purchase again.', 'woocommerce' ); ?></p>
@@ -87,42 +90,42 @@ $language = explode("_",get_locale());
 
 				<li class="woocommerce-order-overview__order order">
 					<?php esc_html_e( 'Order number:', 'woocommerce' ); ?>
-					<strong><?php echo $order->get_order_number(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></strong>
+					<strong><?php esc_html_e($order->get_order_number()); ?></strong>
 				</li>
 
 				<li class="woocommerce-order-overview__date date">
 					<?php esc_html_e( 'Date:', 'woocommerce' ); ?>
-					<strong><?php echo wc_format_datetime( $order->get_date_created() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></strong>
+					<strong><?php esc_html_e(wc_format_datetime( $order->get_date_created() )); ?></strong>
 				</li>
 
 				<?php if ( is_user_logged_in() && $order->get_user_id() === get_current_user_id() && $order->get_billing_email() ) : ?>
 					<li class="woocommerce-order-overview__email email">
 						<?php esc_html_e( 'Email:', 'woocommerce' ); ?>
-						<strong><?php echo $order->get_billing_email(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></strong>
+						<strong><?php esc_html_e($order->get_billing_email()); ?></strong>
 					</li>
 				<?php endif; ?>
 
 				<li class="woocommerce-order-overview__total total">
 					<?php esc_html_e( 'Total:', 'woocommerce' ); ?>
-					<strong><?php echo $order->get_formatted_order_total(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></strong>
+					<strong><?php esc_html_e("$".$order->get_total())?></strong>
 				</li>
 
 				<?php if ( $order->get_payment_method_title() ) : ?>
 					<li class="woocommerce-order-overview__payment-method method">
 						<?php esc_html_e( 'Payment method:', 'woocommerce' ); ?>
-						<strong><?php echo wp_kses_post( $order->get_payment_method_title() ); ?></strong>
+						<strong><?php esc_html_e(wp_kses_post( $order->get_payment_method_title() )); ?></strong>
 					</li>
 				<?php endif; ?>
 			</ul>
 		<?php endif; ?>
    <?php if($order->get_meta("_qr_image")){ ?>
 		<div id="content_qr">
-			<h3><?=$language[0] == "es"?"Seleccionar la criptomoneda para pagar:":"Select the crypto-currency to pay:"?></h3>
+			<h3><?php esc_html_e($language[0] == "es"?"Seleccionar la criptomoneda para pagar:":"Select the crypto-currency to pay:");?></h3>
 			<br>
 			<?php if($order->status == 'on-hold' or $order->status == 'pending'){ ?>
 				<div style="text-align:center">
 					<?php foreach($order->get_meta("_qr_image") as $i => $coin): ?>
-						<button class="buttonCoin"><?=$coin['currency']?> <img class="imageGeneral icons_coins" src="/imgs/<?=$coin['currency'].'.png'?>" /> <?=$coin['label']=='Label Undefined'?'':'- '.$coin['label']?></button>
+						<button class="buttonCoin"><?php esc_html_e($coin['currency']); ?> <img class="imageGeneral icons_coins" src="<?php echo $ASSETS_URL; ?>/images/<?php echo $coin['currency'].'.png';?>" /> <?php echo $coin['label']=='Label Undefined'?'':'- '.$coin['label']; ?></button>
 					<?php endforeach; ?>
 				</div>
 
@@ -130,15 +133,15 @@ $language = explode("_",get_locale());
 					<?php foreach($order->get_meta("_qr_image") as $i => $coin): ?>
 						<div class="qrClass" style="display:none">
 							<br>
-							<img class="imageGeneral" src="/imgs/<?=$coin['currency'].'.png'?>" />
-							<h5><?=$coin['currency']?> <?=$coin['label']=='Label Undefined'?'':'- '.$coin['label']?></h5>
+							<img class="imageGeneral" src="<?php echo $ASSETS_URL;?>/images/<?php echo $coin['currency'].'.png'?>" />
+							<h5><?php esc_html_e($coin['currency']); ?> <?php esc_html_e($coin['label']=='Label Undefined'?'':'- '.$coin['label']);?></h5>
 							<br>
-							<h5><?=$language[0] == "es"?"Cantidad equivalente:":"Equivalent quantity:"?></h5>
-							<h3>$ <?=$coin['amount']?></h3>
+							<h5><?php esc_html_e($language[0] == "es"?"Cantidad equivalente:":"Equivalent quantity:");?></h5>
+							<h3>$ <?php esc_html_e($coin['amount']);?></h3>
 							<br><br>
-							<img style="display:initial" src="<?=$coin['qr']?>" alt="No se puede mostrar qr"/>
+							<img style="display:initial" src="<?php echo $coin['qr']?>" alt="No se puede mostrar qr"/>
 							<br><br>
-							<a href="<?=$coin['uri']?>"><?=$language[0] == "es"?"Abrir wallet":"Open Wallet"?></a>
+							<a href="<?php echo $coin['uri']; ?>"><?php esc_html_e($language[0] == "es"?"Abrir wallet":"Open Wallet");?></a>
 							<br><br>
 							<input style="width:100%;text-align:center" class="addressPay" type="text" value="<?=$coin['address']?>" readonly/>
 						</div>
@@ -146,21 +149,21 @@ $language = explode("_",get_locale());
 				</div>
 			<?php }elseif($order->status == 'processing'){ ?>
 				<div>
-				    <img class="imgConfirmation" src="/imgs/confirmacion.png" />
-					<p class="classP"><?=$language[0] == "es"? "Su pago ya fue recibido, se le notificara por correo cuando sea validado":"Your payment has been received, you will be notified by mail when it is validated"?></p>
-					<span class="statusClass procesando"><?= $language[0] == "es" ? "PROCESANDO PAGO":"PROCESSING PAYMENT" ?></span>
+				    <img class="imgConfirmation" src="<?php echo $ASSETS_URL; ?>/images/confirmacion.png" />
+					<p class="classP"><?php esc_html_e($language[0] == "es"? "Su pago ya fue recibido, se le notificara por correo cuando sea validado":"Your payment has been received, you will be notified by mail when it is validated");?></p>
+					<span class="statusClass procesando"><?php esc_html_e($language[0] == "es" ? "PROCESANDO PAGO":"PROCESSING PAYMENT");?></span>
 				</div>
 			<?php }elseif($order->status == "cancelled"){ ?>
 				<div>
-					<img class="imgConfirmation" src="/imgs/error.png" />
-					<p class="classP"><?=$language[0] == "es"?"Lo sentimos, su pago ha sido rechazado. Su dinero sera devuelto pronto a su wallet":"Sorry, your payment has been refused. Your money will be returned to your wallet soon"?></p>
-					<span class="statusClass cancelado"><?=$language[0] == "es" ? "VENTA CANCELADA":"SALE CANCELLED"?></span>
+					<img class="imgConfirmation" src="<?php echo $ASSETS_URL;?>/images/error.png" />
+					<p class="classP"><?php esc_html_e($language[0] == "es"?"Lo sentimos, su pago ha sido rechazado. Su dinero sera devuelto pronto a su wallet":"Sorry, your payment has been refused. Your money will be returned to your wallet soon");?></p>
+					<span class="statusClass cancelado"><?php esc_html_e($language[0] == "es" ? "VENTA CANCELADA":"SALE CANCELLED")?></span>
 				</div>
 			<?php }elseif($order->status == "completed"){ ?>
 				<div>
-					<img class="imgConfirmation" src="/imgs/confirmacion.png" />
-					<p class="classP"><?=$language[0] == "es" ?"Pago aceptado. ¡GRACIAS POR SU COMPRA!":"Payment accepted. THANK YOU FOR YOUR PURCHASE!"?></p>
-					<span class="statusClass completado"><?= $language[0] == "es" ? "VENTA COMPLETADA":"SALE COMPLETED." ?></span>
+					<img class="imgConfirmation" src="<?php echo $ASSETS_URL; ?>/images/confirmacion.png" />
+					<p class="classP"><?php esc_html_e($language[0] == "es" ?"Pago aceptado. ¡GRACIAS POR SU COMPRA!":"Payment accepted. THANK YOU FOR YOUR PURCHASE!");?></p>
+					<span class="statusClass completado"><?php esc_html_e($language[0] == "es" ? "VENTA COMPLETADA":"SALE COMPLETED.");?></span>
 				</div>
 			<?php } ?>
 		</div>
@@ -176,10 +179,11 @@ $language = explode("_",get_locale());
 	<?php endif; ?>
 </div>
 <?php if($order->get_meta("_qr_image")){ ?>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="<?php echo $ASSETS_URL; ?>/js/sweetalert2@9.js"></script>
 <script>
 	var inputAddress = document.querySelectorAll(".addressPay");
 	var languagePage = document.getElementById("language").value;
+	var assetsUrl = document.getElementById("assetsUrl").value;
 	inputAddress.forEach(element => {
 		element.addEventListener("focus",() => {
 			let selBox = document.createElement('textarea');
@@ -194,7 +198,7 @@ $language = explode("_",get_locale());
 			document.execCommand('copy');
 			document.body.removeChild(selBox);
 			Swal.fire({
-				type:"success",
+				icon:"success",
 				title:languagePage == "es" ? "Copiado":"Copied",
 				timer:1500,
 				showConfirmButton:false
@@ -219,6 +223,7 @@ $language = explode("_",get_locale());
 	}
 	let count = 0;
 	var id = document.getElementById("orderid").value;
+
 	function deleteChild(parentNode,text,status){
 		let hijos = parentNode.childNodes;
 		parentNode.querySelectorAll('*').forEach(n => n.remove());
@@ -229,8 +234,8 @@ $language = explode("_",get_locale());
 		let img = document.createElement("img");
 		img.classList.add("imgConfirmation");
 
-		if(status === "PROCESANDO" || status === "COMPLETADO") img.setAttribute("src","/imgs/confirmacion.png");
-		else img.setAttribite("src","/imgs/error.png");
+		if(status === "PROCESANDO" || status === "COMPLETADO") img.setAttribute("src",`${assetsUrl}/images/confirmacion.png`);
+		else img.setAttribite("src",`${assetsUrl}/images/error.png`);
 
 		if (status === "PROCESANDO" ) messageStatus = languagePage == "es"? "PROCESANDO PAGO":"PROCESSING PAYMENT";
 		else if (status === "COMPLETADO" ) messageStatus =languagePage == "es" ? "VENTA COMPLETADA":"SALE COMPLETED.";
